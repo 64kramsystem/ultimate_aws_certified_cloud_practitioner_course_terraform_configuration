@@ -10,5 +10,7 @@ resource "aws_instance" "first_instance" {
 
   key_name = "saverio"
 
+  iam_instance_profile = aws_iam_role.demo_role.id
+
   user_data = file("${path.module}/ec2_instances_user_data.sh")
 }
