@@ -8,7 +8,7 @@ resource "aws_instance" "first_instance" {
   ]
   associate_public_ip_address = true
 
-  key_name = "saverio"
+  key_name = "myuser"
 
   iam_instance_profile = aws_iam_role.demo_role.id
 
@@ -25,7 +25,7 @@ resource "aws_instance" "second_instance" {
   ]
   associate_public_ip_address = true
 
-  key_name = "saverio"
+  key_name = "myuser"
 
   iam_instance_profile = aws_iam_role.demo_role.id
 
