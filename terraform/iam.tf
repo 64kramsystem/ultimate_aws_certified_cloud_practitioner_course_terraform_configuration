@@ -31,6 +31,12 @@ resource "aws_iam_user" "myuser" {
 #   public_key = "ssh-rsa [...] myuser"
 # }
 
+# resource "aws_key_pair" "myuser" {
+#   key_name   = "myuser"
+#   provider   = aws.eu-west-2
+#   public_key = "ssh-rsa [...] myuser"
+# }
+
 ################################################################################
 # USER GROUP MEMBERSHIPS
 ################################################################################
