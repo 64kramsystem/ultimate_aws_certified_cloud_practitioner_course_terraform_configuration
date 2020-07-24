@@ -7,6 +7,8 @@
 resource "aws_ebs_volume" "first_instance_extra" {
   availability_zone = aws_instance.first_instance.availability_zone
   size              = 2
+  encrypted         = true
+  kms_key_id        = aws_kms_key.ebs-test.arn
 }
 
 ################################################################################
