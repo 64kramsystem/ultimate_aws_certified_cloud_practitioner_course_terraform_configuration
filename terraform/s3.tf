@@ -158,3 +158,52 @@ resource "aws_s3_bucket_object" "beach" {
 
   storage_class = "INTELLIGENT_TIERING"
 }
+
+################################################################################
+# PRIVATE BUCKET/PROPERTIES/POLICIES/OBJECT
+################################################################################
+
+resource "aws_s3_bucket" "sav-test-private" {
+  bucket = "${local.base_bucket_name}-private"
+}
+
+resource "aws_s3_bucket_object" "coffee-private" {
+  bucket = aws_s3_bucket.sav-test-private.bucket
+  key    = "coffee.jpg"
+  source = "s3/coffee.jpg"
+}
+
+resource "aws_s3_bucket_public_access_block" "sav-test-private" {
+  bucket = aws_s3_bucket.sav-test-private.bucket
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# See https://www.terraform.io/docs/providers/aws/r/cloudfront_origin_access_identity.html#updating-your-bucket-policy.
+#
+resource "aws_s3_bucket_policy" "sav-test-private-allow-cloudfront" {
+  bucket = aws_s3_bucket.sav-test-private.bucket
+
+  depends_on = [aws_s3_bucket_public_access_block.sav-test-private]
+
+  policy = <<-POLICY
+    {
+        "Version": "2008-10-17",
+        "Id": "PolicyForCloudFrontPrivateContent",
+        "Statement": [
+            {
+                "Sid": "1",
+                "Effect": "Allow",
+                "Principal": {
+                    "AWS": "${aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn}"
+                },
+                "Action": "s3:GetObject",
+                "Resource": "${aws_s3_bucket.sav-test-private.arn}/*"
+            }
+        ]
+    }
+  POLICY
+}
