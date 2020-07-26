@@ -59,3 +59,37 @@ resource "aws_cloudwatch_metric_alarm" "ec2_first_instance_system_status_check_f
 
   alarm_description = "Created from EC2 Console"
 }
+
+# Special billing alarms - needs to be in `us-east-1`.
+#
+resource "aws_cloudwatch_metric_alarm" "billing_alarm" {
+  alarm_name = "BillingAlarm"
+  provider   = aws.us-east-1
+
+  metric_name = "EstimatedCharges"
+
+  namespace = "AWS/Billing"
+
+  dimensions = {
+    "Currency" = "USD"
+  }
+
+  comparison_operator = "GreaterThanThreshold"
+
+  threshold = 10
+
+  alarm_actions = [
+    aws_sns_topic.billing_alarms.arn,
+  ]
+
+  evaluation_periods = 1
+  period             = 21600
+  statistic          = "Maximum"
+  treat_missing_data = "missing"
+
+  # Interestingly, 0 is the default when created via Monitoring tab, which is invalid for TF, which
+  # requires at least 1.
+  #
+  datapoints_to_alarm = 1
+}
+

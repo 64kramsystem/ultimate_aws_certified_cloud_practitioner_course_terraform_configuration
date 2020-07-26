@@ -15,6 +15,13 @@ provider "aws" {
   secret_key = var.aws_secret_access_key
 }
 
+provider "aws" {
+  alias      = "us-east-1"
+  region     = "us-east-1" # N.Virginia
+  access_key = var.aws_access_key_id
+  secret_key = var.aws_secret_access_key
+}
+
 # Conveniences for referencing the region.
 
 data "aws_region" "eu-central-1" {
